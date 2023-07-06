@@ -6322,9 +6322,9 @@ var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
 var $author$project$Picshare$errorMessage = function (error) {
 	if (error.$ === 'BadBody') {
-		return 'Sorry, we couldn\'t process your feed at this time. We\'re working on it!';
+		return 'Sorry, we couldn\'t process your feed at this time.\n            We\'re working on it!';
 	} else {
-		return 'Sorry, we couldn\'t load your feed at this time. Please try again later.';
+		return 'Sorry, we couldn\'t load your feed at this time.\n            Please try again later.';
 	}
 };
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
@@ -6425,7 +6425,7 @@ var $author$project$Picshare$viewComment = function (comment) {
 				_List_Nil,
 				_List_fromArray(
 					[
-						$elm$html$Html$text('comment:')
+						$elm$html$Html$text('Comment:')
 					])),
 				$elm$html$Html$text(' ' + comment)
 			]));
@@ -6438,7 +6438,7 @@ var $author$project$Picshare$viewCommentList = function (comments) {
 			$elm$html$Html$div,
 			_List_fromArray(
 				[
-					$elm$html$Html$Attributes$class('comment')
+					$elm$html$Html$Attributes$class('comments')
 				]),
 			_List_fromArray(
 				[
@@ -6471,7 +6471,7 @@ var $author$project$Picshare$viewComments = function (photo) {
 						_List_fromArray(
 							[
 								$elm$html$Html$Attributes$type_('text'),
-								$elm$html$Html$Attributes$placeholder('Add a comment…'),
+								$elm$html$Html$Attributes$placeholder('Add a comment...'),
 								$elm$html$Html$Attributes$value(photo.newComment),
 								$elm$html$Html$Events$onInput(
 								$author$project$Picshare$UpdateComment(photo.id))
@@ -6486,7 +6486,7 @@ var $author$project$Picshare$viewComments = function (photo) {
 							]),
 						_List_fromArray(
 							[
-								$elm$html$Html$text('save')
+								$elm$html$Html$text('Save')
 							]))
 					]))
 			]));
@@ -6588,7 +6588,7 @@ var $author$project$Picshare$viewFeed = function (maybeFeed) {
 				]),
 			_List_fromArray(
 				[
-					$elm$html$Html$text('Loading Feed…')
+					$elm$html$Html$text('Loading Feed...')
 				]));
 	}
 };
@@ -6630,7 +6630,7 @@ var $author$project$Picshare$view = function (model) {
 						_List_Nil,
 						_List_fromArray(
 							[
-								$elm$html$Html$text('picshare')
+								$elm$html$Html$text('Picshare')
 							]))
 					])),
 				A2(

@@ -98,7 +98,7 @@ viewLoveButton photo =
 viewComment : String -> Html Msg
 viewComment comment =
     li []
-        [ strong [] [ text "comment:" ]
+        [ strong [] [ text "Comment:" ]
         , text (" " ++ comment)
         ]
 
@@ -110,7 +110,7 @@ viewCommentList comments =
             text ""
 
         _ ->
-            div [ class "comment" ]
+            div [ class "comments" ]
                 [ ul []
                     (List.map viewComment comments)
                 ]
@@ -120,20 +120,17 @@ viewComments : Photo -> Html Msg
 viewComments photo =
     div []
         [ viewCommentList photo.comments
-        , form
-            [ class "new-comment"
-            , onSubmit (SaveComment photo.id)
-            ]
+        , form [ class "new-comment", onSubmit (SaveComment photo.id) ]
             [ input
                 [ type_ "text"
-                , placeholder "Add a comment…"
+                , placeholder "Add a comment..."
                 , value photo.newComment
                 , onInput (UpdateComment photo.id)
                 ]
                 []
             , button
                 [ disabled (String.isEmpty photo.newComment) ]
-                [ text "save" ]
+                [ text "Save" ]
             ]
         ]
 
@@ -158,17 +155,19 @@ viewFeed maybeFeed =
 
         Nothing ->
             div [ class "loading-feed" ]
-                [ text "Loading Feed…" ]
+                [ text "Loading Feed..." ]
 
 
 errorMessage : Http.Error -> String
 errorMessage error =
     case error of
         Http.BadBody _ ->
-            """Sorry, we couldn't process your feed at this time. We're working on it!"""
+            """Sorry, we couldn't process your feed at this time.
+            We're working on it!"""
 
         _ ->
-            """Sorry, we couldn't load your feed at this time. Please try again later."""
+            """Sorry, we couldn't load your feed at this time.
+            Please try again later."""
 
 
 viewContent : Model -> Html Msg
@@ -186,7 +185,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "header" ]
-            [ h1 [] [ text "picshare" ] ]
+            [ h1 [] [ text "Picshare" ] ]
         , div [ class "content-flow" ]
             [ viewContent model ]
         ]

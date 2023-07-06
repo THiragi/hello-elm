@@ -6175,7 +6175,7 @@ var $author$project$Picshare$fetchFeed = $elm$http$Http$get(
 			$elm$json$Json$Decode$list($author$project$Picshare$photoDecoder)),
 		url: $author$project$Picshare$baseUrl + 'feed'
 	});
-var $author$project$Picshare$initialModel = {feed: $elm$core$Maybe$Nothing};
+var $author$project$Picshare$initialModel = {error: $elm$core$Maybe$Nothing, feed: $elm$core$Maybe$Nothing};
 var $author$project$Picshare$init = function (_v0) {
 	return _Utils_Tuple2($author$project$Picshare$initialModel, $author$project$Picshare$fetchFeed);
 };
@@ -6186,19 +6186,116 @@ var $author$project$Picshare$subscriptions = function (model) {
 };
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $elm$core$String$trim = _String_trim;
+var $author$project$Picshare$saveNewComment = function (photo) {
+	var comment = $elm$core$String$trim(photo.newComment);
+	if (comment === '') {
+		return photo;
+	} else {
+		return _Utils_update(
+			photo,
+			{
+				comments: _Utils_ap(
+					photo.comments,
+					_List_fromArray(
+						[comment])),
+				newComment: ''
+			});
+	}
+};
+var $elm$core$Basics$not = _Basics_not;
+var $author$project$Picshare$toggleLike = function (photo) {
+	return _Utils_update(
+		photo,
+		{liked: !photo.liked});
+};
+var $author$project$Picshare$updateComment = F2(
+	function (comment, photo) {
+		return _Utils_update(
+			photo,
+			{newComment: comment});
+	});
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
+var $author$project$Picshare$updatePhotoById = F3(
+	function (updatePhoto, id, feed) {
+		return A2(
+			$elm$core$List$map,
+			function (photo) {
+				return _Utils_eq(photo.id, id) ? updatePhoto(photo) : photo;
+			},
+			feed);
+	});
+var $author$project$Picshare$updateFeed = F3(
+	function (updatePhoto, id, maybeFeed) {
+		return A2(
+			$elm$core$Maybe$map,
+			A2($author$project$Picshare$updatePhotoById, updatePhoto, id),
+			maybeFeed);
+	});
 var $author$project$Picshare$update = F2(
 	function (msg, model) {
-		if (msg.a.$ === 'Ok') {
-			var feed = msg.a.a;
-			return _Utils_Tuple2(
-				_Utils_update(
-					model,
-					{
-						feed: $elm$core$Maybe$Just(feed)
-					}),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'ToggleLike':
+				var id = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							feed: A3($author$project$Picshare$updateFeed, $author$project$Picshare$toggleLike, id, model.feed)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'UpdateComment':
+				var id = msg.a;
+				var comment = msg.b;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							feed: A3(
+								$author$project$Picshare$updateFeed,
+								$author$project$Picshare$updateComment(comment),
+								id,
+								model.feed)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'SaveComment':
+				var id = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							feed: A3($author$project$Picshare$updateFeed, $author$project$Picshare$saveNewComment, id, model.feed)
+						}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				if (msg.a.$ === 'Ok') {
+					var feed = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								feed: $elm$core$Maybe$Just(feed)
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					var error = msg.a.a;
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								error: $elm$core$Maybe$Just(error)
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
 		}
 	});
 var $elm$json$Json$Encode$string = _Json_wrap;
@@ -6214,6 +6311,13 @@ var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$html$Html$h1 = _VirtualDom_node('h1');
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
+var $author$project$Picshare$errorMessage = function (error) {
+	if (error.$ === 'BadBody') {
+		return 'Sorry, we couldn\'t process your feed at this time. We\'re working on it!';
+	} else {
+		return 'Sorry, we couldn\'t load your feed at this time. Please try again later.';
+	}
+};
 var $elm$html$Html$h2 = _VirtualDom_node('h2');
 var $elm$html$Html$img = _VirtualDom_node('img');
 var $elm$html$Html$Attributes$src = function (url) {
@@ -6222,6 +6326,13 @@ var $elm$html$Html$Attributes$src = function (url) {
 		'src',
 		_VirtualDom_noJavaScriptOrHtmlUri(url));
 };
+var $author$project$Picshare$SaveComment = function (a) {
+	return {$: 'SaveComment', a: a};
+};
+var $author$project$Picshare$UpdateComment = F2(
+	function (a, b) {
+		return {$: 'UpdateComment', a: a, b: b};
+	});
 var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
@@ -6234,6 +6345,60 @@ var $elm$html$Html$Attributes$boolProperty = F2(
 var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
 var $elm$html$Html$form = _VirtualDom_node('form');
 var $elm$html$Html$input = _VirtualDom_node('input');
+var $elm$html$Html$Events$alwaysStop = function (x) {
+	return _Utils_Tuple2(x, true);
+};
+var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
+	return {$: 'MayStopPropagation', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$stopPropagationOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayStopPropagation(decoder));
+	});
+var $elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3($elm$core$List$foldr, $elm$json$Json$Decode$field, decoder, fields);
+	});
+var $elm$html$Html$Events$targetValue = A2(
+	$elm$json$Json$Decode$at,
+	_List_fromArray(
+		['target', 'value']),
+	$elm$json$Json$Decode$string);
+var $elm$html$Html$Events$onInput = function (tagger) {
+	return A2(
+		$elm$html$Html$Events$stopPropagationOn,
+		'input',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysStop,
+			A2($elm$json$Json$Decode$map, tagger, $elm$html$Html$Events$targetValue)));
+};
+var $elm$html$Html$Events$alwaysPreventDefault = function (msg) {
+	return _Utils_Tuple2(msg, true);
+};
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $elm$html$Html$Events$onSubmit = function (msg) {
+	return A2(
+		$elm$html$Html$Events$preventDefaultOn,
+		'submit',
+		A2(
+			$elm$json$Json$Decode$map,
+			$elm$html$Html$Events$alwaysPreventDefault,
+			$elm$json$Json$Decode$succeed(msg)));
+};
 var $elm$html$Html$Attributes$placeholder = $elm$html$Html$Attributes$stringProperty('placeholder');
 var $elm$html$Html$Attributes$type_ = $elm$html$Html$Attributes$stringProperty('type');
 var $elm$html$Html$Attributes$value = $elm$html$Html$Attributes$stringProperty('value');
@@ -6286,7 +6451,9 @@ var $author$project$Picshare$viewComments = function (photo) {
 				$elm$html$Html$form,
 				_List_fromArray(
 					[
-						$elm$html$Html$Attributes$class('new-comment')
+						$elm$html$Html$Attributes$class('new-comment'),
+						$elm$html$Html$Events$onSubmit(
+						$author$project$Picshare$SaveComment(photo.id))
 					]),
 				_List_fromArray(
 					[
@@ -6296,7 +6463,9 @@ var $author$project$Picshare$viewComments = function (photo) {
 							[
 								$elm$html$Html$Attributes$type_('text'),
 								$elm$html$Html$Attributes$placeholder('Add a comment…'),
-								$elm$html$Html$Attributes$value(photo.newComment)
+								$elm$html$Html$Attributes$value(photo.newComment),
+								$elm$html$Html$Events$onInput(
+								$author$project$Picshare$UpdateComment(photo.id))
 							]),
 						_List_Nil),
 						A2(
@@ -6313,7 +6482,26 @@ var $author$project$Picshare$viewComments = function (photo) {
 					]))
 			]));
 };
+var $author$project$Picshare$ToggleLike = function (a) {
+	return {$: 'ToggleLike', a: a};
+};
 var $elm$html$Html$i = _VirtualDom_node('i');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
 var $author$project$Picshare$viewLoveButton = function (photo) {
 	var buttonClass = photo.liked ? 'fa-heart' : 'fa-heart-o';
 	return A2(
@@ -6329,7 +6517,9 @@ var $author$project$Picshare$viewLoveButton = function (photo) {
 				_List_fromArray(
 					[
 						$elm$html$Html$Attributes$class('fa fa-2x'),
-						$elm$html$Html$Attributes$class(buttonClass)
+						$elm$html$Html$Attributes$class(buttonClass),
+						$elm$html$Html$Events$onClick(
+						$author$project$Picshare$ToggleLike(photo.id))
 					]),
 				_List_Nil)
 			]));
@@ -6393,6 +6583,25 @@ var $author$project$Picshare$viewFeed = function (maybePhoto) {
 				]));
 	}
 };
+var $author$project$Picshare$viewContent = function (model) {
+	var _v0 = model.error;
+	if (_v0.$ === 'Just') {
+		var error = _v0.a;
+		return A2(
+			$elm$html$Html$div,
+			_List_fromArray(
+				[
+					$elm$html$Html$Attributes$class('feed-error')
+				]),
+			_List_fromArray(
+				[
+					$elm$html$Html$text(
+					$author$project$Picshare$errorMessage(error))
+				]));
+	} else {
+		return $author$project$Picshare$viewFeed(model.feed);
+	}
+};
 var $author$project$Picshare$view = function (model) {
 	return A2(
 		$elm$html$Html$div,
@@ -6423,7 +6632,7 @@ var $author$project$Picshare$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						$author$project$Picshare$viewFeed(model.feed)
+						$author$project$Picshare$viewContent(model)
 					]))
 			]));
 };

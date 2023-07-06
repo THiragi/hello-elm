@@ -6304,7 +6304,7 @@ var $author$project$Picshare$update = F2(
 				}
 			default:
 				var data = msg.a;
-				var _v1 = A2($elm$core$Debug$log, 'Websocket data', data);
+				var _v1 = A2($elm$core$Debug$log, 'WebSocket data', data);
 				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
@@ -6572,9 +6572,9 @@ var $author$project$Picshare$viewDetailedPhoto = function (photo) {
 					]))
 			]));
 };
-var $author$project$Picshare$viewFeed = function (maybePhoto) {
-	if (maybePhoto.$ === 'Just') {
-		var feed = maybePhoto.a;
+var $author$project$Picshare$viewFeed = function (maybeFeed) {
+	if (maybeFeed.$ === 'Just') {
+		var feed = maybeFeed.a;
 		return A2(
 			$elm$html$Html$div,
 			_List_Nil,

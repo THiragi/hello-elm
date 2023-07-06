@@ -10,11 +10,6 @@ import Json.Decode.Pipeline exposing (hardcoded, required)
 import WebSocket
 
 
-wsUrl : String
-wsUrl =
-    "wss://programming-elm.com/"
-
-
 type alias Id =
     Int
 
@@ -53,6 +48,11 @@ photoDecoder =
 baseUrl : String
 baseUrl =
     "https://programming-elm.com/"
+
+
+wsUrl : String
+wsUrl =
+    "wss://programming-elm.com/"
 
 
 initialModel : Model
@@ -151,8 +151,8 @@ viewDetailedPhoto photo =
 
 
 viewFeed : Maybe Feed -> Html Msg
-viewFeed maybePhoto =
-    case maybePhoto of
+viewFeed maybeFeed =
+    case maybeFeed of
         Just feed ->
             div [] (List.map viewDetailedPhoto feed)
 
@@ -274,7 +274,7 @@ update msg model =
         LoadStreamPhoto data ->
             let
                 _ =
-                    Debug.log "Websocket data" data
+                    Debug.log "WebSocket data" data
             in
             ( model, Cmd.none )
 

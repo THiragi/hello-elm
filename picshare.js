@@ -6197,6 +6197,16 @@ var $author$project$Picshare$subscriptions = function (model) {
 };
 var $elm$json$Json$Encode$string = _Json_wrap;
 var $author$project$WebSocket$listen = _Platform_outgoingPort('listen', $elm$json$Json$Encode$string);
+var $elm$core$Maybe$map = F2(
+	function (f, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return $elm$core$Maybe$Just(
+				f(value));
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $elm$core$String$trim = _String_trim;
@@ -6227,16 +6237,6 @@ var $author$project$Picshare$updateComment = F2(
 		return _Utils_update(
 			photo,
 			{newComment: comment});
-	});
-var $elm$core$Maybe$map = F2(
-	function (f, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return $elm$core$Maybe$Just(
-				f(value));
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
 	});
 var $author$project$Picshare$updatePhotoById = F3(
 	function (updatePhoto, id, feed) {
@@ -6324,7 +6324,17 @@ var $author$project$Picshare$update = F2(
 					return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 				}
 			default:
-				return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							feed: A2(
+								$elm$core$Maybe$map,
+								$elm$core$Basics$append(model.streamQueue),
+								model.feed),
+							streamQueue: _List_Nil
+						}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $elm$html$Html$Attributes$stringProperty = F2(
